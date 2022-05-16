@@ -108,11 +108,11 @@ $.widget("custom.DispatchLocationMapping", {
                 var coordinates = []
                 var NE = bounds.getNorthEast();
                 var SW = bounds.getSouthWest();
+                
+                coordinates.push(new google.maps.LatLng(NE.lat(), SW.lng()));
                 coordinates.push(new google.maps.LatLng(NE.lat(), NE.lng()));
                 coordinates.push(new google.maps.LatLng(SW.lat(), NE.lng()));
                 coordinates.push(new google.maps.LatLng(SW.lat(), SW.lng()));
-                coordinates.push(new google.maps.LatLng(NE.lat(), SW.lng()));
-
                 _self.GenerateNewPolygon(null, null, "8F5C8CDA-1805-4133-BC38-A1751C6D067F", null, "", null, "rectange", coordinates, true);
                 event.overlay.setMap(null);
             }
@@ -566,7 +566,13 @@ $.widget("custom.DispatchLocationMapping", {
             polygonPoints = _self.generateGeoJSONCircle(center, defaultRadius, numSides, isDrawn)
         }
         else {
+            //need to reverse order or polygon is inside out
             polygonPoints.push(polygonPoints[0]);
+            numSides = polygonPoints.length;
+            for (var i = numSides - 1; i >= 0; i--) {
+                polygon.push(new google.maps.LatLng(polygonPoints[i].lat(), polygonPoints[i].lng()));
+            }
+            polygonPoints = polygon;
         }
         var whse = objectID;
 
@@ -874,7 +880,7 @@ $.widget("custom.DispatchLocationMapping", {
                 }
         }).error(function (jqxhr, status, error) {
             _self.fetchError(jqxhr, status, error);
-            M.toast({ html: whse + whse + ": Not Saved; Try Again", displayLength: 5000 })
+            M.toast({ html: whse + ": Not Saved; Try Again", displayLength: 5000 })
         }).complete(function (jqxhr, status) {
 
         });

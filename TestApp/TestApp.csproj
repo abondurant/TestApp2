@@ -341,13 +341,6 @@
     <Compile Include="Views\Account\Login.aspx.designer.cs">
       <DependentUpon>Login.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Views\UI\MappingDrawing.aspx.cs">
-      <DependentUpon>MappingDrawing.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="Views\UI\MappingDrawing.aspx.designer.cs">
-      <DependentUpon>MappingDrawing.aspx</DependentUpon>
-    </Compile>
     <Compile Include="Views\UI\Search.aspx.cs">
       <DependentUpon>Search.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -379,7 +372,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
-    <Content Include="Scripts\DispatchLocationDrawing.js" />
     <Content Include="Scripts\DispatchLocationMapping.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -394,7 +386,6 @@
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
     <Content Include="Views\Account\Login.aspx" />
-    <Content Include="Views\UI\MappingDrawing.aspx" />
     <Content Include="Views\UI\Search.aspx" />
     <Content Include="Views\UI\Mapping.aspx" />
     <Content Include="Web.config">
