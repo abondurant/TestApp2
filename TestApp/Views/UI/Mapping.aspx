@@ -2,13 +2,8 @@
 
 <asp:Content ID="ContentHead" ContentPlaceHolderID="Head" runat="server">
 
-     <%--<script src="https://maps.googleapis.com/maps/api/js?client=gme-systemsmaintenance&sensor=false&libraries=geometry&libraries=places"></script>--%>
-     <%--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCCD4XdV3XjvVCJ1j-4wcARLVUq2hRNA4&sensor=false&libraries=geometry&libraries=places"></script>--%>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCCD4XdV3XjvVCJ1j-4wcARLVUq2hRNA4&sensor=false&libraries=geometry&libraries=places"></script>
-    <%--<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBCCD4XdV3XjvVCJ1j-4wcARLVUq2hRNA4&libraries=geometry"></script>--%>
-     <%--<script src="https://maps.googleapis.com/maps/api/places?key=AIzaSyBCCD4XdV3XjvVCJ1j-4wcARLVUq2hRNA4&sensor=false"></script>--%>
-    <script src="<% = ResolveUrl("~/Content/materialize.css") %>"></script>
-    <script src="<% = ResolveUrl("~/Scripts/materialize.js") %>"></script>
+       <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCCeXHo5WtSZ_5-D254nWSG5rpy6iwM838&libraries=geometry,places,drawing"></script>
+    <link type="text/css" rel="stylesheet" href="/Content/materialize.css"  media="screen,projection"/>
     <script src="<% = ResolveUrl("~/Scripts/DispatchLocationMapping.js") %>"></script>
 </asp:Content>
 <asp:Content ID="Content2" ContentPlaceHolderID="HeaderMenu" runat="server">
@@ -300,7 +295,7 @@
 
         
         function seeList() {
-             var url = "<% = ResolveUrl("~/") %>" + "UI/Search"
+            var url = "<% = ResolveUrl("~/") %>" + "UI/Search";
             window.open(url);
         }
 

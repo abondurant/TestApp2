@@ -19,5 +19,9 @@ namespace TestApp.Controllers.UI
         {
             return View();
         }
+        public ActionResult MappingDrawing()
+        {
+            return View();
+        }
     }
 }

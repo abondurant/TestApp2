@@ -1,4 +1,6 @@
-﻿$.widget("custom.DispatchLocationMapping", {
+﻿//const materialize = require("./materialize");
+
+$.widget("custom.DispatchLocationMapping", {
 
     // Reference to available Stock Google Map Icons
     // https://www.google.com/fusiontables/DataSource?docid=1BDnT5U1Spyaes0Nj3DXciJKa_tuu7CzNRXWdVA#map:id=3
@@ -7,7 +9,7 @@
         url: '~~~DEFAULT_URL~~~',
         whseUrl: '',
         geographyPolygonUrl: null,
-        apiKey: 'AIzaSyBCCD4XdV3XjvVCJ1j-4wcARLVUq2hRNA4',
+        apiKey: 'AIzaSyCCeXHo5WtSZ_5-D254nWSG5rpy6iwM838',
         filter: null,
         labelField: null,
         latitudeField: null,
@@ -56,7 +58,66 @@
 
         _self.options.map = new google.maps.Map(_self.element[0], _self.options.mapOptions);
 
+        const drawingManager = new google.maps.drawing.DrawingManager({
+            //drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: [
+                    //google.maps.drawing.OverlayType.MARKER,
+                    google.maps.drawing.OverlayType.CIRCLE,
+                    google.maps.drawing.OverlayType.POLYGON,
+                    //google.maps.drawing.OverlayType.POLYLINE,
+                    google.maps.drawing.OverlayType.RECTANGLE,
+                ],
+            },
+            markerOptions: {
+                icon: "https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png",
+            },
+            circleOptions: {
+                fillColor: "#ffff00",
+                fillOpacity: 1,
+                strokeWeight: 5,
+                clickable: false,
+                editable: true,
+                zIndex: 1,
+            }
+        });
+        //google.maps.event.addListener(drawingManager, 'circlecomplete', function (circle) {
+        //    var radius = circle.getRadius();
+        //    var center = circle.getCenter();
+            
+        //});
 
+        google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+            if (event.type == 'polygon') {
+                var coordinates = event.overlay.latLngs;
+                var coordinateList = coordinates.Hd[0].Hd;
+                _self.GenerateNewPolygon(null, null, "8F5C8CDA-1805-4133-BC38-A1751C6D067F", null, "", 8, "polygon", coordinateList, true);
+                event.overlay.setMap(null);
+            }
+            if (event.type == 'circle') {
+                var radius = event.overlay.getRadius();
+                var center = event.overlay.getCenter();
+                _self.GenerateNewPolygon(center.lat(), center.lng(), "8F5C8CDA-1805-4133-BC38-A1751C6D067F", radius, "", 16, "circle", null, true);
+                event.overlay.setMap(null);
+            }
+            if (event.type == 'rectangle') {
+                var bounds = event.overlay.getBounds();
+
+                var coordinates = []
+                var NE = bounds.getNorthEast();
+                var SW = bounds.getSouthWest();
+                coordinates.push(new google.maps.LatLng(NE.lat(), NE.lng()));
+                coordinates.push(new google.maps.LatLng(SW.lat(), NE.lng()));
+                coordinates.push(new google.maps.LatLng(SW.lat(), SW.lng()));
+                coordinates.push(new google.maps.LatLng(NE.lat(), SW.lng()));
+
+                _self.GenerateNewPolygon(null, null, "8F5C8CDA-1805-4133-BC38-A1751C6D067F", null, "", null, "rectange", coordinates, true);
+                event.overlay.setMap(null);
+            }
+        });
+        drawingManager.setMap(_self.options.map);
 
         _self.buildFormFunction();
 
@@ -494,17 +555,21 @@
     },
 
 
-    GenerateNewPolygon: function (latitude, longitude, objectID, defaultRadius, label) {
+    GenerateNewPolygon: function (latitude, longitude, objectID, defaultRadius, label, numSides = 8, type = "circle", polygonPoints = null, isDrawn = false) {
         var _self = this;
-        var center = new google.maps.LatLng(latitude, longitude);
-        var polygonPoints = null;
+        
+        //var polygonPoints = null;
         var polygon = [];
 
-        polygonPoints = _self.generateGeoJSONCircle(center, defaultRadius, 8)
-
+        if (type == "circle") {
+            var center = new google.maps.LatLng(latitude, longitude);
+            polygonPoints = _self.generateGeoJSONCircle(center, defaultRadius, numSides, isDrawn)
+        }
+        else {
+            polygonPoints.push(polygonPoints[0]);
+        }
         var whse = objectID;
 
-        //        var point = [idx];
         var whseID = label;
         var warehouse = objectID;
         var GeoIDN = _self.CreateGuid();
@@ -518,7 +583,7 @@
 
 
         myPolygon = new google.maps.Polygon({
-            paths: polygonPoints[0],
+            paths: polygonPoints,
             draggable: true, // turn off if it gets annoying
             editable: true,
             strokeColor: "#004d66",
@@ -565,10 +630,12 @@
         //}
     },
 
-    generateGeoJSONCircle: function (center, radius, numSides) {
+    generateGeoJSONCircle: function (center, radius, numSides, isDrawn = false) {
 
         var points = [];
-        radius = radius * 1609.34
+        if (!isDrawn) {
+            radius = radius * 1609.34
+        }
         degreeStep = (360 / numSides) * -1;
 
         for (var i = 0; i < numSides; i++) {
@@ -587,7 +654,7 @@
 
 
 
-        return [points]
+        return points
 
     },
 
@@ -725,7 +792,7 @@
                                 // Exception Occured
                                 if (data.Exception != null)
                                     if (data.Exception.Message != null)
-                                        Materialize.toast('ERROR: ' + data.Exception.Message, 2000);
+                                        M.toast({ html: "ERROR: " + data.Exception.Message, displayLength: 5000 });
                         }
                     }
                 }
@@ -802,12 +869,12 @@
         }).success(function (data, status, jqxhr) {
             if (data != null)
                 if (status == "success") {
-                    Materialize.toast(whse + ": Saved Sucessfully", 5000)
+                    M.toast({ html: whse + ": Saved Sucessfully", displayLength: 5000 })
 
                 }
         }).error(function (jqxhr, status, error) {
             _self.fetchError(jqxhr, status, error);
-            Materialize.toast(whse + ": Not Saved; Try Again", 5000)
+            M.toast({ html: whse + whse + ": Not Saved; Try Again", displayLength: 5000 })
         }).complete(function (jqxhr, status) {
 
         });
